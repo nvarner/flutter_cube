@@ -1,3 +1,20 @@
+/*
+ * Copyright 2019-2021 Zebiao Hu
+ * Copyright 2021 Nathan Varner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import 'dart:ui';
 import 'package:flutter/widgets.dart' hide Image;
 import 'package:vector_math/vector_math_64.dart';
@@ -32,7 +49,7 @@ class _CubeState extends State<Cube> {
   }
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
-    scene.camera.trackBall(toVector2(_lastFocalPoint), toVector2(details.localFocalPoint), 1.5);
+    scene.camera.dragRotate(toVector2(_lastFocalPoint), toVector2(details.localFocalPoint), 1.5);
     _lastFocalPoint = details.localFocalPoint;
     if (_lastZoom == null) {
       _lastZoom = scene.camera.zoom;
