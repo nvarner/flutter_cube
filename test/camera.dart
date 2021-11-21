@@ -17,6 +17,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter_cube/flutter_cube.dart';
+import 'package:flutter_cube/src/orientation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -44,7 +45,7 @@ void main() {
     test("Near plane to world simple", () {
       Camera camera = Camera(
         position: Vector3(0.0, 0.0, 0.0),
-        orientation: Quaternion.axisAngle(Vector3(0.0, 1.0, 0.0), 0),
+        orientation: Orientation(),
         near: 0.1,
       );
 
@@ -54,7 +55,7 @@ void main() {
     test("Near plane to world rotated", () {
       Camera camera = Camera(
         position: Vector3(0.0, 0.0, 0.0),
-        orientation: Quaternion.axisAngle(Vector3(0.0, 1.0, 0.0), math.pi * 0.5),
+        orientation: Orientation(theta: math.pi * 0.5),
         near: 0.9,
       );
 
@@ -68,7 +69,7 @@ void main() {
     test("Screen to ground", () {
       Camera camera = Camera(
         position: Vector3(0.0, 10.0, 0.0),
-        orientation: Quaternion.axisAngle(Vector3(1.0, 0.0, 0.0), -math.pi / 2),
+        orientation: Orientation(phi: -math.pi / 2),
         viewportWidth: 10,
         viewportHeight: 10,
       );

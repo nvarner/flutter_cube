@@ -19,6 +19,8 @@ import 'dart:math' as math;
 
 import 'package:vector_math/vector_math_64.dart';
 
+import 'orientation.dart';
+
 /// Represents a camera. Screen space is based on pixels displayed on the
 /// physical screen being rendered to. It's different for each device. Near
 /// plane space is based on aspect ratio of the screen being rendered to. Its
@@ -26,24 +28,23 @@ import 'package:vector_math/vector_math_64.dart';
 class Camera {
   Camera({
     Vector3? position,
-    Quaternion? orientation,
+    this.orientation = const Orientation(),
     this.fov = 60.0,
     this.near = 0.1,
     this.far = 1000,
     this.zoom = 1.0,
     this.viewportWidth = 100.0,
     this.viewportHeight = 100.0,
+    this.phiMin = math.pi / 2,
+    this.phiMax = math.pi,
   }) {
     if (position != null) {
       this.position = position;
     }
-    if (orientation != null) {
-      this.orientation = orientation;
-    }
   }
 
   Vector3 position = Vector3(0.0, 0.0, -10.0);
-  Quaternion orientation = Quaternion.axisAngle(Vector3(0.0, 0.0, 1.0), 0.0);
+  Orientation orientation;
 
   /// Vertical field of view, in degrees
   double fov;
@@ -54,13 +55,20 @@ class Camera {
   double viewportWidth;
   double viewportHeight;
 
+  /// Minimum angle from the z+ axis
+  double phiMin;
+
+  /// Maximum angle from the z+ axis
+  double phiMax;
+
   double get aspectRatio => viewportWidth / viewportHeight;
 
   /// A point in world space that the camera is looking directly at
-  Vector3 get target => position + orientation.rotated(Vector3(0.0, 0.0, 1.0));
+  Vector3 get target =>
+      position + orientation.quaternion.rotated(Vector3(0.0, 0.0, 1.0));
 
   /// A vector parallel to the left and right edges of the near plane
-  Vector3 get up => orientation.rotated(Vector3(0.0, 1.0, 0.0));
+  Vector3 get up => orientation.quaternion.rotated(Vector3(0.0, 1.0, 0.0));
 
   /// Half the height of the near plane, ie. the distance from the center to the
   /// top
@@ -89,7 +97,7 @@ class Camera {
   /// given point in near plane space
   Vector3 nearPlane2World(Vector2 nearPlanePoint) {
     Vector3 cameraSpace = Vector3(nearPlanePoint.x, nearPlanePoint.y, near);
-    return orientation.rotated(cameraSpace);
+    return orientation.quaternion.rotated(cameraSpace);
   }
 
   /// Returns the point in world space on the near plane corresponding to the
@@ -125,13 +133,22 @@ class Camera {
     return makeFrustumMatrix(left, right, bottom, top, near, far);
   }
 
+  /// Rotate the camera relatively by the given orientation
+  void rotateRelative(Orientation dOrientation) {
+    double phi = orientation.phi + dOrientation.phi;
+    double theta = orientation.theta + dOrientation.theta;
+
+    double constrainedPhi = math.min(phiMax, math.max(phiMin, phi));
+
+    orientation = Orientation(phi: constrainedPhi, theta: theta);
+  }
+
   /// Rotate the camera based on a mouse drag from one screen space point to
   /// another
   void dragRotate(Vector2 from, Vector2 to, [double sensitivity = 5.0]) {
-    double dx = sensitivity * (from.x - to.x) / viewportHeight;
-    double dy = sensitivity * (from.y - to.y) / viewportHeight;
+    double dtheta = sensitivity * -(from.x - to.x) / viewportHeight;
+    double dphi = sensitivity * -(from.y - to.y) / viewportHeight;
 
-    this.orientation *= Quaternion.axisAngle(Vector3(0.0, 1.0, 0.0), dx)
-      * Quaternion.axisAngle(this.orientation.rotated(Vector3(1.0, 0.0, 0.0)), dy);
+    rotateRelative(Orientation(phi: dphi, theta: dtheta));
   }
 }

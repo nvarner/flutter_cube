@@ -1,5 +1,4 @@
 /*
- * Copyright 2019-2021 Zebiao Hu
  * Copyright 2021 Nathan Varner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +14,23 @@
  * limitations under the License.
  */
 
-library flutter_cube;
+import 'dart:math' as math;
 
-export 'src/widget.dart';
-export 'src/scene.dart';
-export 'src/object.dart';
-export 'src/camera.dart';
-export 'src/orientation.dart';
-export 'src/mesh.dart';
-export 'src/material.dart';
-export 'package:vector_math/vector_math_64.dart' hide Colors;
+import 'package:vector_math/vector_math_64.dart';
+
+class Orientation {
+  // Angles are as in the mathematical conventions for spherical coordinates,
+  // except that y+, not z+, is up
+
+  /// Angle in radians from the y+ axis
+  final double phi;
+
+  /// Angle in radians from the x+ axis
+  final double theta;
+
+  const Orientation({this.phi = math.pi / 2, this.theta = 0});
+
+  Quaternion get quaternion =>
+      Quaternion.axisAngle(Vector3(1.0, 0.0, 0.0), math.pi / 2 - phi) *
+      Quaternion.axisAngle(Vector3(0.0, 1.0, 0.0), theta);
+}
