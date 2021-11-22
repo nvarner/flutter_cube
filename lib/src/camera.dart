@@ -151,4 +151,11 @@ class Camera {
 
     rotateRelative(Orientation(phi: dphi, theta: dtheta));
   }
+
+  /// Pan the camera based on a mouse drag from one screen space point to
+  /// another
+  void dragPan(Vector2 from, Vector2 to) {
+    Vector3 delta = screen2Ground(to) - screen2Ground(from);
+    position += delta;
+  }
 }
