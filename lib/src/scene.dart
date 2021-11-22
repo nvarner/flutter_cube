@@ -1,5 +1,6 @@
 /*
  * Copyright 2019-2021 Zebiao Hu
+ * Copyright 2021 Nathan Varner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,7 +129,8 @@ class Scene {
       final int yIndex = xIndex + 1;
       final Float64List storage4 = v.storage;
       final double w = storage4[3]; //v.w;
-      positions[xIndex] = storage4[0] / w; //v.x;
+      // negated so that x+ is to the right
+      positions[xIndex] = -storage4[0] / w; //v.x;
       positions[yIndex] = storage4[1] / w; //v.y;
       positionsZ[vertexOffset + i] = storage4[2] / w; //v.z;
     }

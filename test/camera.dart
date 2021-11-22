@@ -29,7 +29,7 @@ void main() {
       );
 
       expect(camera.screen2NearPlane(Vector2(5, 5)), Vector2(0, 0));
-      expect(camera.screen2NearPlane(Vector2(0, 0)), Vector2(-camera.nearPlaneHalfWidth, -camera.nearPlaneHalfHeight));
+      expect(camera.screen2NearPlane(Vector2(0, 0)), Vector2(-camera.nearPlaneHalfWidth, camera.nearPlaneHalfHeight));
     });
 
     test("Screen to near plane aspect ratio", () {
@@ -39,7 +39,7 @@ void main() {
       );
 
       expect(camera.screen2NearPlane(Vector2(5, 0.5)), Vector2(0, 0));
-      expect(camera.screen2NearPlane(Vector2(0, 0)), Vector2(-camera.nearPlaneHalfWidth, -camera.nearPlaneHalfHeight));
+      expect(camera.screen2NearPlane(Vector2(0, 0)), Vector2(-camera.nearPlaneHalfWidth, camera.nearPlaneHalfHeight));
     });
 
     test("Near plane to world simple", () {

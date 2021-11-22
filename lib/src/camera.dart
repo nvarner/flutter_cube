@@ -43,6 +43,8 @@ class Camera {
     }
   }
 
+  Vector3 initialPanPoint = Vector3(0.0, 0.0, 0.0);
+
   Vector3 position = Vector3(0.0, 0.0, -10.0);
   Orientation orientation;
 
@@ -89,7 +91,7 @@ class Camera {
   Vector2 screen2NearPlane(Vector2 screenPoint) {
     return Vector2(
       (screenPoint.x / viewportWidth - 0.5) * nearPlaneWidth,
-      (screenPoint.y / viewportHeight - 0.5) * nearPlaneHeight,
+      ((1 - (screenPoint.y / viewportHeight)) - 0.5) * nearPlaneHeight,
     );
   }
 
@@ -152,10 +154,17 @@ class Camera {
     rotateRelative(Orientation(phi: dphi, theta: dtheta));
   }
 
-  /// Pan the camera based on a mouse drag from one screen space point to
-  /// another
-  void dragPan(Vector2 from, Vector2 to) {
-    Vector3 delta = screen2Ground(to) - screen2Ground(from);
+  /// Begin panning the camera based on the start of a mouse drag in screen
+  /// space
+  void startDragPan(Vector2 screen) {
+    initialPanPoint = screen2Ground(screen);
+  }
+
+  /// Pan the camera based on the current position in screen space of a mouse
+  /// drag
+  void dragPan(Vector2 screen) {
+    Vector3 point = screen2Ground(screen);
+    Vector3 delta = initialPanPoint - point;
     position += delta;
   }
 }
